@@ -12,7 +12,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import api_util.FilesUtil;
 
@@ -73,10 +76,15 @@ public class DatabaseConnector {
 	// this method aims to get attractions from a database
 	public ArrayList<NaturalAttraction> getAttractionsQuery (String query) {
 		ArrayList<NaturalAttraction> naturalAttractions = new ArrayList<>();
-		System.out.println("Connecting to the database...");
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		String dateString = dateFormat.format(date);
+		
+		System.out.println(dateString + " Connecting to the database...");
 
 		try (Connection connection = DriverManager.getConnection(database, databaseUsername, databasePassword)) {
-		    System.out.println("Database connected!");
+		    System.out.println(dateString + " Database connected!");
 		    
 		    Statement stmt = connection.createStatement();
 		    ResultSet result = stmt.executeQuery(query);
@@ -93,7 +101,7 @@ public class DatabaseConnector {
 		    	naturalAttractions.add(naturalAttraction);
 		    }
 		} catch (SQLException e) {
-		    throw new IllegalStateException("Cannot connect to the database!", e);
+		    throw new IllegalStateException(dateString + " Cannot connect to the database!", e);
 		}
 		return naturalAttractions;
 	}

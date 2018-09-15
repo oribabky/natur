@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#456990</color> <!-- DARK BLUE -->
+    <color name="colorPrimaryDark">#2A2D34</color> <!-- DARK GRAY -->
+    <color name="colorAccent">#009B72</color> <!-- DARK GREEN -->
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>-->
+</resources>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">natursevärdheter</string>
+    <string name="title_activity_maps">Svenska natursevärdheter</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="textview">TextView</string>
+    <string name="waterfalls">Vattenfall</string>
+    <string name="waterfall">Waterfall</string>
+    <string name="canyons">Kanjoner</string>
+    <string name="canyon">Canyon</string>
+</resources>

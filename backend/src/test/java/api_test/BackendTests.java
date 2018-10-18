@@ -132,7 +132,6 @@ public class BackendTests {
     	try {
 			Files.delete(file);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

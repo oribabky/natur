@@ -15,9 +15,11 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import api_util.FilesUtil;
+import models.Waterfall;
 
 /**
  * this class is used to connect to a MySQL database and to perform queries
@@ -29,12 +31,11 @@ public class DatabaseConnector {
 	private String databaseUsername;
 	private String databasePassword;
 	
-	private static final String DATABASE_FILENAME = "database.txt";
+	private static final String DATABASE_FILENAME = "database-remote.txt";
 	private static final Path DATABASE_FILE = FileSystems.getDefault().getPath(DATABASE_FILENAME);
 	
 	static final String DATABASE_NAME = "naturdb";
-	static final String ATTRACTION_TABLE = "Attraction";
-	static final String ATTRACTION_NAME_COLUMN = "AttractionType";
+	static final String WATERFALL_TABLE = "Waterfall";
 
 	public DatabaseConnector () {
 		setDatabaseInformation();
@@ -72,17 +73,12 @@ public class DatabaseConnector {
 		databasePassword = databaseInformation[2];
 	}
 	
-	
-	// this method aims to get attractions from a database
-	public ArrayList<NaturalAttraction> getAttractionsQuery (String query) {
-		ArrayList<NaturalAttraction> naturalAttractions = new ArrayList<>();
-		
+	public Collection<Waterfall> getWaterfallsFromDatabase(String query) {
+		Collection<Waterfall> waterfalls = new ArrayList<>();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-		String dateString = dateFormat.format(date);
+		String dateString = dateFormat.format(new Date());
 		
 		System.out.println(dateString + " Connecting to the database...");
-
 		try (Connection connection = DriverManager.getConnection(database, databaseUsername, databasePassword)) {
 		    System.out.println(dateString + " Database connected!");
 		    
@@ -91,18 +87,23 @@ public class DatabaseConnector {
 		    
 		    // process each query result separately
 		    while (result.next()) {
-		    	NaturalAttraction naturalAttraction = new NaturalAttraction(
+		    	Waterfall waterfall = new Waterfall(
 		    			result.getString("Name"),
 		    			result.getString("Country"),
+		    			result.getInt("Height"),
 		    			result.getDouble("Latitude"),
 		    			result.getDouble("Longitude"),
-		    			result.getString("AttractionType")
+		    			result.getString("ImageUrl"),
+		    			result.getString("ImageContrib"),
+		    			result.getString("WikiUrl")
 		    			);
-		    	naturalAttractions.add(naturalAttraction);
+		    	waterfalls.add(waterfall);
 		    }
 		} catch (SQLException e) {
 		    throw new IllegalStateException(dateString + " Cannot connect to the database!", e);
 		}
-		return naturalAttractions;
+		return waterfalls;
 	}
+	
+	
 }

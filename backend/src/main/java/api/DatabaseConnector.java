@@ -15,6 +15,7 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import api_util.FilesUtil;
@@ -29,12 +30,13 @@ public class DatabaseConnector {
 	private String databaseUsername;
 	private String databasePassword;
 	
-	private static final String DATABASE_FILENAME = "database.txt";
+	private static final String DATABASE_FILENAME = "database-remote.txt";
 	private static final Path DATABASE_FILE = FileSystems.getDefault().getPath(DATABASE_FILENAME);
 	
 	static final String DATABASE_NAME = "naturdb";
 	static final String ATTRACTION_TABLE = "Attraction";
 	static final String ATTRACTION_NAME_COLUMN = "AttractionType";
+	static final String WATERFALL_TABLE = "Waterfall";
 
 	public DatabaseConnector () {
 		setDatabaseInformation();
@@ -105,4 +107,38 @@ public class DatabaseConnector {
 		}
 		return naturalAttractions;
 	}
+	
+	public Collection<Waterfall> getWaterfallsFromDatabase(String query) {
+		Collection<Waterfall> waterfalls = new ArrayList<>();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String dateString = dateFormat.format(new Date());
+		
+		System.out.println(dateString + " Connecting to the database...");
+		try (Connection connection = DriverManager.getConnection(database, databaseUsername, databasePassword)) {
+		    System.out.println(dateString + " Database connected!");
+		    
+		    Statement stmt = connection.createStatement();
+		    ResultSet result = stmt.executeQuery(query);
+		    
+		    // process each query result separately
+		    while (result.next()) {
+		    	Waterfall waterfall = new Waterfall(
+		    			result.getString("Name"),
+		    			result.getString("Country"),
+		    			result.getInt("Height"),
+		    			result.getDouble("Latitude"),
+		    			result.getDouble("Longitude"),
+		    			result.getString("ImageUrl"),
+		    			result.getString("ImageContrib"),
+		    			result.getString("WikiUrl")
+		    			);
+		    	waterfalls.add(waterfall);
+		    }
+		} catch (SQLException e) {
+		    throw new IllegalStateException(dateString + " Cannot connect to the database!", e);
+		}
+		return waterfalls;
+	}
+	
+	
 }

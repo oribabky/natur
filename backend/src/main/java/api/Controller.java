@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import models.Greeting;
+import models.Waterfall;
+
 /**
  * This class provide backend endpoints from which users can retrieve information
  * @author tobias
@@ -27,32 +30,6 @@ public class Controller {
     public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
         return new Greeting(counter.incrementAndGet(),
                             String.format(TEMPLATE, name));
-    }
-    
-    // this endpoint is where the user retrieves attractions
-    @RequestMapping("/")
-    public Collection<NaturalAttraction> getMarkers(@RequestParam(value="attractionType", defaultValue=AttractionQuery.DEFAULT_FILTERS) 
-    		String attractionType) {
-    	
-    	// put the query parameters in an array and make sure that it does not contain duplicates
-    	String[] attractionTypes = attractionType.split(",");
-    	Set<String> attractionTypesUnique = new HashSet<>();
-    	for (String attraction : attractionTypes) {
-    		attractionTypesUnique.add(attraction);
-    	}
-    	
-    	// create an attraction filter
-    	AttractionQuery filter = new AttractionQuery(attractionTypesUnique);
-    	
-    	// build a query from the given filter
-    	String query = filter.buildSelectAttractionQuery();
-    	
-    	// perform the query
-    	DatabaseConnector db = new DatabaseConnector();
-    	ArrayList<NaturalAttraction> naturalAttractions = new ArrayList<>();
-    	naturalAttractions = db.getAttractionsQuery(query);
-    	
-    	return naturalAttractions;
     }
     
     @RequestMapping("/waterfall")

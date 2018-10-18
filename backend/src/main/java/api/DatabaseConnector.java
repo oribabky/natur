@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import api_util.FilesUtil;
+import models.Waterfall;
 
 /**
  * this class is used to connect to a MySQL database and to perform queries
@@ -34,8 +35,6 @@ public class DatabaseConnector {
 	private static final Path DATABASE_FILE = FileSystems.getDefault().getPath(DATABASE_FILENAME);
 	
 	static final String DATABASE_NAME = "naturdb";
-	static final String ATTRACTION_TABLE = "Attraction";
-	static final String ATTRACTION_NAME_COLUMN = "AttractionType";
 	static final String WATERFALL_TABLE = "Waterfall";
 
 	public DatabaseConnector () {
@@ -72,40 +71,6 @@ public class DatabaseConnector {
 		database = databaseInformation[0];
 		databaseUsername = databaseInformation[1];
 		databasePassword = databaseInformation[2];
-	}
-	
-	
-	// this method aims to get attractions from a database
-	public ArrayList<NaturalAttraction> getAttractionsQuery (String query) {
-		ArrayList<NaturalAttraction> naturalAttractions = new ArrayList<>();
-		
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-		String dateString = dateFormat.format(date);
-		
-		System.out.println(dateString + " Connecting to the database...");
-
-		try (Connection connection = DriverManager.getConnection(database, databaseUsername, databasePassword)) {
-		    System.out.println(dateString + " Database connected!");
-		    
-		    Statement stmt = connection.createStatement();
-		    ResultSet result = stmt.executeQuery(query);
-		    
-		    // process each query result separately
-		    while (result.next()) {
-		    	NaturalAttraction naturalAttraction = new NaturalAttraction(
-		    			result.getString("Name"),
-		    			result.getString("Country"),
-		    			result.getDouble("Latitude"),
-		    			result.getDouble("Longitude"),
-		    			result.getString("AttractionType")
-		    			);
-		    	naturalAttractions.add(naturalAttraction);
-		    }
-		} catch (SQLException e) {
-		    throw new IllegalStateException(dateString + " Cannot connect to the database!", e);
-		}
-		return naturalAttractions;
 	}
 	
 	public Collection<Waterfall> getWaterfallsFromDatabase(String query) {

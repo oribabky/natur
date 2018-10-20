@@ -1,0 +1,7 @@
+#database connection info
+database.txt
+database-remote.txt
+
+#target
+/target
+!target/gs-rest-service-0.1.0.jar

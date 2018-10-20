@@ -31,7 +31,7 @@ public class DatabaseConnector {
 	private String databaseUsername;
 	private String databasePassword;
 	
-	private static final String DATABASE_FILENAME = "database-remote.txt";
+	private static final String DATABASE_FILENAME = "database.txt";
 	private static final Path DATABASE_FILE = FileSystems.getDefault().getPath(DATABASE_FILENAME);
 	
 	static final String DATABASE_NAME = "naturdb";

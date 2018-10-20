@@ -31,8 +31,6 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         final ImageView imageHolder = view.findViewById(R.id.imageViewInfoWindow);
         TextView textHolder = view.findViewById(R.id.textViewInfoWindow);
 
-
-
         Picasso.get().load(snippetContents).into(imageHolder, new MarkerCallback(marker));
         //textHolder.setText(title);
     }

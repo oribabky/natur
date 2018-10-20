@@ -1,2 +1,11 @@
+<<<<<<< HEAD
 /backend/database.txt
 /backend/database-remote.txt
+=======
+#backend
+/backend/database.txt
+/backend/database-remote.txt
+/backend/log
+/backend/target
+!/backend/target/gs-rest-service-0.1.0.jar
+>>>>>>> desktop customized gitignore

@@ -45,13 +45,12 @@ import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String baseURL = "http://192.168.10.112:8080/?attractionType=";
+    private String naturBackend = "http://localhost:8080/Waterfall";
+    // private String naturBackend = "http://192.168.10.112:8080/?attractionType=";
 
     // arrays to hold google maps markers
     ArrayList<Marker> waterfallMarkers = new ArrayList<>();
     ArrayList<Marker> canyonMarkers = new ArrayList<>();
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +63,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // add action listeners to the switch buttons
         addSwitchListeners();
-
-
     }
 
     // adds action listeners to the switch buttons
@@ -132,7 +129,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mTextView.setText(url);
 
         // set the attraction markers on the map
-        setAttractionMarkers(mMap, baseURL);
+        setAttractionMarkers(mMap, naturBackend);
 
         // turn on the switches
         final Switch waterfallsSwitch = (Switch) findViewById(R.id.waterfallSwitch);
@@ -147,7 +144,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // @TODO remove?
     public String getAttractionsUrl () {
-        String res = baseURL;
+        String res = naturBackend;
         String waterfallQueryName = "Waterfall";
         String canyonQueryName = "Canyon";
 
@@ -171,10 +168,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     res += "," + switches.get(i).getContentDescription();
                 }
             }
-
         }
         return res;
     }
+
     public void setAttractionMarkers(GoogleMap googleMap, String url) {
         mMap = googleMap;
 

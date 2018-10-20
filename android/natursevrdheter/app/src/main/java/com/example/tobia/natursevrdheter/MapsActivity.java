@@ -1,10 +1,8 @@
 package com.example.tobia.natursevrdheter;
 
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -14,10 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -25,27 +20,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
-
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String naturBackend = "http://localhost:8080/Waterfall";
+    private final String NATUR_BACKEND = "http://192.168.10.112:8080";
+    private final String WATERFALL_RESOURCE = NATUR_BACKEND + "/waterfall";
     // private String naturBackend = "http://192.168.10.112:8080/?attractionType=";
 
     // arrays to hold google maps markers
@@ -56,6 +41,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -122,14 +108,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapsActivity.this));
         //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapsActivity.this));
 
-        // set the url based on the options chosen
-        String url = getAttractionsUrl();
-
         final TextView mTextView = (TextView) findViewById(R.id.textView);
-        mTextView.setText(url);
+        mTextView.setText(NATUR_BACKEND);
 
         // set the attraction markers on the map
-        setAttractionMarkers(mMap, naturBackend);
+        setWaterfallMarkers(mMap, WATERFALL_RESOURCE);
 
         // turn on the switches
         final Switch waterfallsSwitch = (Switch) findViewById(R.id.waterfallSwitch);
@@ -139,12 +122,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // @TODO NECESSARY?
         openInfoWindows();
-
     }
 
     // @TODO remove?
     public String getAttractionsUrl () {
-        String res = naturBackend;
+        String res = NATUR_BACKEND;
         String waterfallQueryName = "Waterfall";
         String canyonQueryName = "Canyon";
 
@@ -172,7 +154,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return res;
     }
 
-    public void setAttractionMarkers(GoogleMap googleMap, String url) {
+    public void setWaterfallMarkers(GoogleMap googleMap, String url) {
         mMap = googleMap;
 
         // Instantiate the RequestQueue.
@@ -184,36 +166,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Double lat;
                 double lon;
                 String attractionName;
-                String attractionType;
+                String imageURL;
                 try {
                     for (int i = 0; i < response.length(); i++) {
-                        JSONObject attraction = response.getJSONObject(i);
+                        JSONObject waterfall = response.getJSONObject(i);
 
-                        lat = attraction.getDouble("latitude");
-                        lon = attraction.getDouble("longitude");
-                        attractionName = attraction.getString("name");
-                        attractionType = attraction.getString("attractionType");
+                        lat = waterfall.getDouble("latitude");
+                        lon = waterfall.getDouble("longitude");
+                        attractionName = waterfall.getString("name");
+                        imageURL = waterfall.getString("imageURL");
 
                         // Add a marker on the map
                         LatLng pos = new LatLng(lat, lon);
-                        if (attractionType.equals("Waterfall")) {
-                            waterfallMarkers.add(
-                                    mMap.addMarker(new MarkerOptions()
-                                            .position(pos)
-                                            .title(attractionName)
-                                            .snippet("https://upload.wikimedia.org/wikipedia/commons/1/1b/Fallens_dagar_Juli_2005_008.jpg"))
-                            );
-                        }
-                        else if (attractionType.equals("Canyon")) {
-                            Marker marker;
-                            canyonMarkers.add(
-                                    mMap.addMarker(new MarkerOptions()
-                                            .position(pos)
-                                            .title(attractionName)
-                                            .snippet("https://images.pexels.com/photos/415952/pexels-photo-415952.jpeg?auto=compress&cs=tinysrgb&h=350"))
-                            );
-                        }
-                        //mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+                        waterfallMarkers.add(
+                                mMap.addMarker(new MarkerOptions()
+                                        .position(pos)
+                                        .title(attractionName)
+                                        .snippet(imageURL))
+                        );
                     }
                 } catch (JSONException e) {
                 }
@@ -221,7 +191,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("errorTag", error.getMessage());
+                Log.d("BackendConnectioError", error.getMessage());
                 error.getMessage();
             }
         });
